@@ -1,0 +1,33 @@
+<ion-view title="Trip List" id="page2">
+    <ion-content padding="true" class="has-header">
+
+    <div ng-controller="tripListCtrl">        
+        <div class="list card" ng-repeat="trip in testTrips | orderBy:'-dbKey' ">
+            <div class="item item-avatar" >
+                <img src="img/ProfileExample.jpg">
+                <h2> {{ trip.text }} </h2>
+                <p ng-if="trip.date!=''"> {{ trip.location }} on {{ trip.date }} </p>
+                <p ng-if="trip.date==''"> {{ trip.location }} </p>
+            </div>
+
+            <div class="item item-body">
+                <img class="full-image" ng-src="{{ trip.image }}" alt="Description">
+                <p>
+                  {{ trip.descriptionText }}
+                </p>
+<!--            
+                <button class="button button-positive">
+                    <i class="icon ion-camera"></i>
+                    Photos
+                </button>
+-->
+                <button class="button button-positive" ng-click="confirmDelete(trip)">
+                    <i class="icon ion-trash-a"></i>
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+        
+    </ion-content>
+</ion-view>
