@@ -69,6 +69,7 @@ function ($scope, $stateParams, $rootScope) {
     var infowindows = new Array();
     var newLatLng = new Array();
     console.log("Number of trips:" + $rootScope.testTrips.length);
+    // Loop through all the trips and add a markter for each
     for(var i = 0; i < $rootScope.testTrips.length; i++){
         console.log("pre-processed latlong:" + $rootScope.testTrips[i].latlng);
         if($rootScope.testTrips[i].latlng != "null"){
@@ -96,7 +97,6 @@ function ($scope, $stateParams, $rootScope) {
                                     "<img src=" + $rootScope.testTrips[i].image + " width='225' >" + "<br>" +
                                     $rootScope.testTrips[i].descriptionText + 
                                     "</div>";
-
             infowindows[i] = new google.maps.InfoWindow({ content: contentString });
             
             // Listen for a close event and recenter the map when the window closes
@@ -104,23 +104,6 @@ function ($scope, $stateParams, $rootScope) {
                 console.log("infowindow closed");
                 map.panTo(originalLatLng);
                 map.setZoom(5);
-                /*
-                for(var i = 0; i < $rootScope.testTrips.length; i++){
-                    var str = $rootScope.testTrips[i].latlng;
-                    console.log("pre-processed latlong:" + str);
-                    // Clean up the string and convert to a float as needed for google map API
-                    str = str.replace("(", "");
-                    str = str.replace(")", "");    
-                    str = str.replace(",", "");
-                    str = str.split(" ");
-                    console.log("post-procssed lat:" + str[0]);
-                    console.log("post-procssed long:" + str[1]);
-                    newLatLng = {lat: parseFloat(str[0]), lng: parseFloat(str[1]) };
-                    bounds.extend(newLatLng);
-                    //map.panToBounds(bounds);
-                }
-                */
-                //map.panToBounds(bounds);
                 map.fitBounds(bounds);
             });
             
@@ -154,7 +137,6 @@ function ($scope, $stateParams, $rootScope) {
 }])
 
 
-   
 .controller('bucketListCtrl', ['$scope', '$stateParams', '$ionicPopup', '$ionicLoading', '$timeout', '$ionicPopover', '$rootScope', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
@@ -174,87 +156,6 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
     var input = document.getElementById("bucketList-input");
     var autocomplete = new google.maps.places.Autocomplete(input);
     autocomplete.bindTo('bounds', map);
-    // Place a marker on the map
-    var marker = new google.maps.Marker({ map: map });
-    
-    //var newLatLng = {lat: parseFloat(str[0]), lng: parseFloat(str[1]) };
-    var newLatLng = {lat: 41.91862886518304, lng: -87.64892578125};
-    // Make the markers to put on the map
-    marker = new google.maps.Marker({
-        map: map,
-        position: newLatLng
-    });
-    
-    var contentString = "Hello" + "</br>" +
-                        "Me juice" + " ";
-    var infowindow = new google.maps.InfoWindow({ content: contentString });
-    marker.addListener('click', function() { infowindow.open(map, this); });
-    
-/*
-    // set the bounds so the map will show all markers
-    var bounds = new google.maps.LatLngBounds();
-    //var marker2 = new Array();
-    //var infowindows = new Array();
-    console.log("Number of trips:" + $rootScope.testTrips.length);
-    for(var i = 0; i < $rootScope.testTrips.length; i++){
-        console.log("pre-processed latlong:" + $rootScope.testTrips[i].latlng);
-        if($rootScope.testTrips[i].latlng != "null"){
-            var str = $rootScope.testTrips[i].latlng;
-            console.log("pre-processed latlong:" + str);
-            // Clean up the string and convert to a float as needed for google map API
-            str = str.replace("(", "");
-            str = str.replace(")", "");    
-            str = str.replace(",", "");
-            str = str.split(" ");
-            console.log("post-procssed lat:" + str[0]);
-            console.log("post-procssed long:" + str[1]);
-            //var newLatLng = {lat: parseFloat(str[0]), lng: parseFloat(str[1]) };
-            //var newLatLng = {lat: 41.91862886518304, lng: -87.64892578125};
-            // Make the markers to put on the map
-            marker2[i] = new google.maps.Marker({
-                map: map,
-                position: newLatLng
-            });
-            var contentString =     $rootScope.testTrips[i].text + "</br>" +
-                                    $rootScope.testTrips[i].location + " " + $rootScope.testTrips[i].date;
-            
-            var infowindow = new google.maps.InfoWindow({ content: contentString });
-  
-            marker2[i].addListener('click', function() { infowindow.open(map, this); });
-            bounds.extend(newLatLng);
-        }
-    }
-*/
-
-/*
-    // Don't zoom in too far on only one marker
-    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
-       var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + 0.01, bounds.getNorthEast().lng() + 0.01);
-       var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - 0.01, bounds.getNorthEast().lng() - 0.01);
-       bounds.extend(extendPoint1);
-       bounds.extend(extendPoint2);
-    }
-    map.fitBounds(bounds);
-*/
-/*
-    // Create the map
-    var mapCanvas = document.getElementById("bucketMap");
-    var mapOptions = {
-        //center: new google.maps.LatLng(41.91862886518304, -87.64892578125),
-        center: new google.maps.LatLng(39.8282, -98.5795),
-        zoom: 3
-    };
-    var map = new google.maps.Map(mapCanvas, mapOptions);
-*/
-
-/*
-    // Bind the location enter field to autocomplete
-    var input = document.getElementById("bucketList-input");
-    var autocomplete = new google.maps.places.Autocomplete(input);
-    autocomplete.bindTo('bounds', map);
-    // Place a marker on the map
-    var marker = new google.maps.Marker({ map: map });
-*/
 
     autocomplete.addListener('place_changed', function() {
         var place = autocomplete.getPlace();
@@ -268,24 +169,31 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
         
         map.setCenter(place.geometry.location);
         map.setZoom(5);
-           
-        // Set the position of the marker using the place ID and location.
-        marker.setPlace({
-            placeId: place.place_id,
-            location: place.geometry.location
-        });
-        marker.setVisible(true);
         
+        // Place a marker on the map
+        var marker = new google.maps.Marker({ map: map });
+        // Make the markers to put on the map
+        marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location
+        });        
+        //marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+          
         $scope.bucketPlaceText = place.formatted_address;
         $scope.bucketPlaceLatLng = place.geometry.location;
-    
-        var contentString = '<div id="Infowindowcontent">'+
+
+        var contentString = "<div id='Infowindowcontent'>"+
                             $scope.bucketPlaceText + "</br>" +
-                            $scope.bucketPlaceLatLng +
-                            '</div>';
-                            
-        var infowindow = new google.maps.InfoWindow({ content: contentString });   
-        marker.addListener('click', function() { infowindow.open(map, marker); });
+                            "<iframe src='https://www.youtube.com/embed/oA-9RLPRTY4?ecver=1'" +
+                            "width='260' height='145' frameborder='0' allowfullscreen></iframe>" +
+                            "</div>";
+        //infowindow.setContent(contentString);    
+        var infowindow = new google.maps.InfoWindow({ content: contentString });  
+        infowindow.open(map, marker);
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });
     });
 
 }])
