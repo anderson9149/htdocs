@@ -5,5 +5,9 @@ angular.module('app.services', [])
 }])
 
 .service('BlankService', [function(){
-
+        return {
+            foo: function() {
+                alert("I'm foo!");
+            }
+        };
 }]);

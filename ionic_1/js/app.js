@@ -26,11 +26,12 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
       StatusBar.styleDefault();
     }
   });
-    $rootScope.testTrips = [];
-    //LoadTripsFromdB();    
-    // AJAX call to send the photo and other tipr data to the server   
+    
     console.log("********** In Angular Constructor")
-             
+    $rootScope.testTrips = [];
+    $rootScope.bucketTrips = [];
+    
+    // AJAX call to send the photo and other tipr data to the server   
     $.ajax({
         url: "php/download.php?",
         type: "POST",             // Type of request to be send, called as method
@@ -67,7 +68,36 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
             } 
         });
 
-  $rootScope.test = 0;
+    // AJAX call to send the photo and other tipr data to the server   
+    $.ajax({
+        url: "php/downloadBucketList.php?",
+        type: "POST",             // Type of request to be send, called as method
+        contentType: false,       // The content type used when sending data to the server.
+        cache: false,             // To unable request pages to be cached
+        processData:false,        // To send DOMDocument or non processed data file it is set to false
+        success: function(data)   // A function to be called if request succeeds
+            {
+            console.log(data);
+            if(data != "0 results")
+                {
+                var myObj = $.parseJSON(data);
+                for(var i = 0; i < myObj.length; i++) {
+                    var obj = myObj[i];
+                    //access data like this:
+                    console.log("dbKey: " + parseInt(myObj[i].dbKey) );
+                    console.log("BucketLocation: " + myObj[i].BucketLocation);
+                    console.log("latlng: " + myObj[i].latlng);
+                    console.log("reg_date: " + myObj[i].reg_date);
+                    $rootScope.bucketTrips.push({   dbKey:parseInt(myObj[i].dbKey),
+                                                    BucketLocation:myObj[i].BucketLocation,
+                                                    latlng:myObj[i].latlng,
+                                                    eg_date:myObj[i].reg_date,});
+                    }
+                }
+            } 
+        });
+        
+  //$rootScope.test = 0;
 })
 
 /*

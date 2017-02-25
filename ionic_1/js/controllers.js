@@ -54,14 +54,16 @@ function ($scope, $stateParams, $rootScope, $ionicPopup) {
 function ($scope, $stateParams, $rootScope) {
     //Set base latlng
     var originalLatLng = {lat: 41.91862886518304, lng: -87.64892578125};
-    
     // Create the map
-    var mapCanvas = document.getElementById("map1");
-    var mapOptions = {
+    var mapCanvas = document.getElementById("map1");    
+    var map = new google.maps.Map(mapCanvas, {
+        zoom: 5,
         center: originalLatLng,
-        zoom: 5
-    };
-    var map = new google.maps.Map(mapCanvas, mapOptions);
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            position: google.maps.ControlPosition.LEFT_BOTTOM
+        }
+    });
         
     // set the bounds so the map will show all markers
     var bounds = new google.maps.LatLngBounds();
@@ -109,11 +111,13 @@ function ($scope, $stateParams, $rootScope) {
             
             // Listen for the marker to get clicked
             marker[i].addListener('click', function() {
-                console.log(this.i);
+                console.log("marker selected = " + this.i);
                 for(var i = 0; i < $rootScope.testTrips.length; i++) {
+                    console.log("close infowindow for marker: " + i);
                     infowindows[i].close();
                 } 
                 console.log(newLatLng[this.i]);
+                //var zoomLatLng = {lat: (newLatLng[this.i].lat+5), lng: newLatLng[this.i].lng};
                 var zoomLatLng = {lat: (newLatLng[this.i].lat+5), lng: newLatLng[this.i].lng};
                 map.setCenter(zoomLatLng);
                 console.log(zoomLatLng);
@@ -142,20 +146,37 @@ function ($scope, $stateParams, $rootScope) {
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopover, $rootScope) {
     //Set base latlng
-    var myLatLng = {lat: 41.91862886518304, lng: -87.64892578125};
+    var originalLatLng = {lat: 41.91862886518304, lng: -87.64892578125};
+    $scope.bucketPlaceText = "";
+    $scope.currentBucketSelection = -1;
     
     // Create the map
-    var mapCanvas = document.getElementById("map2");
-    var mapOptions = {
-        center: myLatLng,
-        zoom: 5
-    };
-    var map = new google.maps.Map(mapCanvas, mapOptions);
+    var mapCanvas = document.getElementById("map2");    
+    var map = new google.maps.Map(mapCanvas, {
+        zoom: 5,
+        center: originalLatLng,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            position: google.maps.ControlPosition.LEFT_BOTTOM
+        }
+    });
     
     // Bind the location enter field to autocomplete
     var input = document.getElementById("bucketList-input");
     var autocomplete = new google.maps.places.Autocomplete(input);
     autocomplete.bindTo('bounds', map);
+    
+    // This makes googles autocomplete component work on a mobile device
+    $scope.disableTap = function(){
+        console.log("********* ng-focus called from location input field **********");
+        container = document.getElementsByClassName('pac-container');
+        // disable ionic data tab
+        angular.element(container).attr('data-tap-disabled', 'true');
+        // leave input field if google-address-entry is selected
+        angular.element(container).on("click", function(){
+            document.getElementById('searchBar').blur();
+        });
+    };
 
     autocomplete.addListener('place_changed', function() {
         var place = autocomplete.getPlace();
@@ -166,7 +187,10 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
         console.log("Place Location = " + place.geometry.location);
         console.log("Full name = " + place.formatted_address);
         console.log("Place ID = " + place.place_id);
-        
+        $scope.bucketPlaceText = place.formatted_address;
+        $scope.bucketPlaceLatLng = place.geometry.location;
+        $scope.bucketPlaceID = place.place_id;
+                
         map.setCenter(place.geometry.location);
         map.setZoom(5);
         
@@ -179,13 +203,10 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
         });        
         //marker.setPosition(place.geometry.location);
         marker.setVisible(true);
-          
-        $scope.bucketPlaceText = place.formatted_address;
-        $scope.bucketPlaceLatLng = place.geometry.location;
-
+ 
         var contentString = "<div id='Infowindowcontent'>"+
                             $scope.bucketPlaceText + "</br>" +
-                            "<iframe src='https://www.youtube.com/embed/oA-9RLPRTY4?ecver=1'" +
+                            "<iframe src='https://www.youtube.com/embed/oA-9RLPRTY4?autoplay=1&playsinline=1'" +
                             "width='260' height='145' frameborder='0' allowfullscreen></iframe>" +
                             "</div>";
         //infowindow.setContent(contentString);    
@@ -194,10 +215,191 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
         marker.addListener('click', function() {
             infowindow.open(map, marker);
         });
+        
+        // Listen for a close event and recenter the map when the window closes
+        google.maps.event.addListener(infowindow,'closeclick',function(){
+            console.log("infowindow closed");
+            //map.panTo(originalLatLng);
+            map.setZoom(5);
+                //map.fitBounds(bounds);
+            });
+        
     });
 
+    // Put the bucketlist markers on the map
+    // set the bounds so the map will show all markers
+    var bounds = new google.maps.LatLngBounds();
+    var marker = new Array();
+    var infowindows = new Array();
+    var newLatLng = new Array();
+    console.log("Number of trips:" + $rootScope.bucketTrips.length);
+    // Loop through all the trips and add a markter for each
+    for(var i = 0; i < $rootScope.bucketTrips.length; i++){
+        if($rootScope.bucketTrips[i].latlng != "null"){
+            var str = $rootScope.bucketTrips[i].latlng;
+            //console.log("pre-processed latlong:" + str);
+            // Clean up the string and convert to a float as needed for google map API
+            str = str.replace("(", "");
+            str = str.replace(")", "");    
+            str = str.replace(",", "");
+            str = str.split(" ");
+            //console.log("post-procssed lat:" + str[0]);
+            //console.log("post-procssed long:" + str[1]);
+            newLatLng[i] = {lat: parseFloat(str[0]), lng: parseFloat(str[1]) };
+            // Make the markers to put on the map
+            marker[i] = new google.maps.Marker({
+                map: map,
+                position: newLatLng[i]
+            });
+            // Add the index as a member of the marker so we can reference it in the "click" callback
+            marker[i].i = i;         
+            
+            // Listen for the marker to get clicked
+            marker[i].addListener('click', function() {
+                console.log("BucketSelection = " + this.i + " latlng: " + newLatLng[this.i].lng);
+                for(var i = 0; i < $rootScope.bucketTrips.length; i++) {
+                    infowindows[i].close();
+                } 
+                var zoomLatLng = {lat: (newLatLng[this.i].lat+5), lng: newLatLng[this.i].lng};
+                map.setCenter(zoomLatLng);
+                console.log(zoomLatLng);
+                map.setZoom(5);
+                infowindows[this.i].open(map, this);
+                $scope.currentBucketSelection = this.i;
+            });
+            
+            // Create the content for the infowindow
+            var contentString = "<div id='Infowindowcontent'>"+
+                            $rootScope.bucketTrips[i].BucketLocation + "</br>" +
+                            "<iframe src='https://www.youtube.com/embed/oA-9RLPRTY4?autoplay=1&playsinline=1'" +
+                            "width='260' height='145' frameborder='0' allowfullscreen></iframe>" +
+                            "</div>";
+            infowindows[i] = new google.maps.InfoWindow({ content: contentString });
+            
+            // Listen for a close event and recenter the map when the window closes
+            google.maps.event.addListener(infowindows[i],'closeclick',function(){
+                console.log("infowindow closed");
+                $scope.currentBucketSelection = -1;
+                map.panTo(originalLatLng);
+                map.setZoom(5);
+                map.fitBounds(bounds);
+            }); 
+            
+            bounds.extend(newLatLng[i]);
+        }
+    }
+    console.log("trips in bucket list = " + $rootScope.bucketTrips.length);
+    
+    // Don't zoom in too far on only one marker
+    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+       var extendPoint1 = new google.maps.LatLng(bounds.getNorthEast().lat() + 0.01, bounds.getNorthEast().lng() + 0.01);
+       var extendPoint2 = new google.maps.LatLng(bounds.getNorthEast().lat() - 0.01, bounds.getNorthEast().lng() - 0.01);
+       bounds.extend(extendPoint1);
+       bounds.extend(extendPoint2);
+    }
+    map.fitBounds(bounds);
+
+    $scope.deleteBucket = function() {
+        console.log("BucketSelection for deletion = " + $scope.currentBucketSelection);
+        if($scope.currentBucketSelection != -1){
+            //Hide the marker and info window
+            infowindows[$scope.currentBucketSelection].close();
+            marker[$scope.currentBucketSelection].setVisible(false);
+            
+            // Delete the bucket trip from the marker, infowindwo, newLatLng and $rootScope.bucketTrips
+            marker.splice($scope.currentBucketSelection, 1);
+            infowindows.splice($scope.currentBucketSelection, 1);
+            newLatLng.splice($scope.currentBucketSelection, 1);
+            $rootScope.bucketTrips.splice($scope.currentBucketSelection, 1);
+            
+            // Set the current selection to -1 to avoid other delete cliks
+            $scope.currentBucketSelection = -1;
+            
+            console.log("Delete it! infoWindows Size = " + infowindows.length + " Markers size = " + marker.length );
+            // Readjust the map view based on new marker setup
+            map.panTo(originalLatLng);
+            Bounds = new google.maps.LatLngBounds();
+            console.log("newBounds.length = " + newLatLng.length);
+            for(i = 0; i < newLatLng.length; i++){
+                console.log("Index: " + i + " : Place Name: " + $rootScope.bucketTrips[i].BucketLocation);
+                Bounds.extend(newLatLng[i]);
+                //  Need to reset the stored index in all the bucket markers since an item was removed from the array
+                marker[i].i = i;
+            }
+            map.fitBounds(Bounds);
+            //map.setZoom(5);
+        }
+    }
+
+    $scope.addBucket = function() {
+        if($scope.bucketPlaceText != ""){
+            console.log("Add the bucket list item : " + $scope.bucketPlaceText + "  latlng" + $scope.bucketPlaceLatLng + "  Place ID:" + $scope.bucketPlaceID);
+            // Trim white space off the input
+            $scope.bucketListText.trim();
+
+            $scope.hideMap = true;
+            $scope.showSpinner = true;
+
+            $ionicLoading.show({
+                template: 'Adding to bucket list...',
+                duration: 10000
+            }).then(function(){
+                console.log("The loading indicator is now displayed");
+            });
+
+            /*
+            // Might need to handle a case when the AJAX doesn't return, TBD
+            $timeout(function () {
+                $ionicLoading.hide();
+                $scope.showSpinner = true;
+            }, 10000);
+            */
+
+
+            // AJAX call to send the photo and other tipr data to the server    
+            $.ajax({
+                url: "php/uploadBucket.php?" +  "buckettripName=" + $scope.bucketPlaceText +
+                                                "&latlng=" + $scope.bucketPlaceLatLng + 
+                                                "&ID" + $scope.bucketPlaceLatLng, // Url to which the request is send
+                type: "POST",             // Type of request to be send, called as method
+                contentType: false,       // The content type used when sending data to the server.
+                cache: false,             // To unable request pages to be cached
+                processData:false,        // To send DOMDocument or non processed data file it is set to false
+                success: function(data)   // A function to be called if request succeeds
+                    {
+                    console.log(data);
+                    var myObj = $.parseJSON(data);
+                    $ionicLoading.hide();
+                    //you can now access data like this:
+                    console.log("dbKey: " + myObj[0].dbKey);
+                    console.log("tripName: " + myObj[0].bucketLocation);
+                    console.log("archived: " + myObj[0].latlng);
+                    console.log("location: " + myObj[0].req_date);
+                    $rootScope.bucketTrips.push({   dbKey:parseInt(myObj[0].dbKey),
+                                                    BucketLocation:myObj[0].BucketLocation,
+                                                    latlng:myObj[0].latlng,
+                                                    eg_date:myObj[0].reg_date,});
+/*
+                    $scope.showSpinner = false;
+                    $scope.hideMap = false;
+                    $scope.$apply(); //this triggers a $digest
+                    //console.log("length: " + $rootScope.testTrips.length);
+                    //photofile = null;
+                    $scope.popupAddedText1 = myObj[0].tripName + " Trip Added!";
+                    $scope.popupAddedText2 = myObj[0].location;
+                    if(myObj[0].date!=""){
+                        $scope.popupAddedText2 = $scope.popupAddedText2 + " on " + myObj[0].date;
+                    */
+                    }
+                    //$scope.showAlert();
+            });
+            //$scope.clearInputs();    
+        }
+    };
+    
 }])
-      
+
+
 .controller('settingsCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
@@ -205,7 +407,7 @@ function ($scope, $stateParams) {
 
 
 }])
-   
+
 .controller('addTripCtrl', ['$scope', '$stateParams', '$rootScope', '$ionicLoading', '$ionicPopup', '$timeout',
 // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
@@ -414,8 +616,7 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         }, 4000);
     };
 
-     
-    // An alert for once the trip is added
+    // An alert for invalid trip entry
     $scope.formNotCompleteAlert = function() {
         console.log("in show alert");
         var alertPopup = $ionicPopup.alert({
@@ -475,3 +676,4 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
       });
     };
   });
+  

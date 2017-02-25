@@ -11,7 +11,6 @@ class TravelDataAccess
     //-----Initialization -------
     function setupDBVars()
     {
-        $echoDebug = FALSE;
 
         // Establish Localhost DB connection
         $this->servername = 'localhost';
@@ -19,6 +18,7 @@ class TravelDataAccess
         $this->username = 'Developer';
         $this->password = 'password';
 
+        $echoDebug = FALSE;
 /*
         // Establish AWS connection
         //$this->servername = 'testdb.chsdaxp5cy30.us-east-1.rds.amazonaws.com';
@@ -101,6 +101,35 @@ class TravelDataAccess
         return $idInserted;
     }
 
+    // Insert a row of data into the BucketTrips table
+    function insertBucketData( $insertEmail, $bucketLocation, $latlng)
+    {
+        // Create connection
+        $conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        } 
+        echoDebug( "Connected successfully" . "\n");
+
+        $sql = "INSERT INTO BucketTrips (email, BucketLocation, latlng)
+        VALUES ('".$insertEmail."', '".$bucketLocation."', '".$latlng."')";
+
+        if ($conn->query($sql) === TRUE) {
+            echoDebug( "New record created successfully");
+        } else {
+            echoDebug( "Error: " . $sql . "\n" . $conn->error);
+        }
+
+        echoDebug( "******************* New Record has id: " . $conn->insert_id . "\n");
+        $idInserted = $conn->insert_id;
+
+        $conn->close();
+
+        return $idInserted;
+    }
+
     // Insert a row of data into the table
     function deleteData( $ID )
     {
@@ -125,7 +154,7 @@ class TravelDataAccess
         $conn->close();
     }
 
-    // Retrieve a row of data into the table
+    // Retrieve a row of data in the table
     function selectData( $sql )
     {
         // Create connection
@@ -138,10 +167,10 @@ class TravelDataAccess
         echoDebug( "Connected successfully" . "\n");
 
         $result = $conn->query($sql);
+        
+        $conn->close();
 
         return $result;
-
-        $conn->close();
     }
 
 }
