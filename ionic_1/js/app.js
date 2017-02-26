@@ -10,7 +10,6 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
 .config(function($ionicConfigProvider, $sceDelegateProvider){
   $sceDelegateProvider.resourceUrlWhitelist([ 'self','*://www.youtube.com/**', '*://player.vimeo.com/video/**']);
   $ionicConfigProvider.views.maxCache(0);
-  
 })
 
 .run(function($ionicPlatform, $rootScope) {
@@ -85,11 +84,11 @@ angular.module('app', ['ionic', 'app.controllers', 'app.routes', 'app.directives
                     var obj = myObj[i];
                     //access data like this:
                     console.log("dbKey: " + parseInt(myObj[i].dbKey) );
-                    console.log("BucketLocation: " + myObj[i].BucketLocation);
+                    console.log("bucketLocation: " + myObj[i].bucketLocation);
                     console.log("latlng: " + myObj[i].latlng);
                     console.log("reg_date: " + myObj[i].reg_date);
                     $rootScope.bucketTrips.push({   dbKey:parseInt(myObj[i].dbKey),
-                                                    BucketLocation:myObj[i].BucketLocation,
+                                                    bucketLocation:myObj[i].bucketLocation,
                                                     latlng:myObj[i].latlng,
                                                     eg_date:myObj[i].reg_date,});
                     }

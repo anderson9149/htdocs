@@ -4,8 +4,7 @@
         <div ng-controller="bucketListCtrl">
         <label class="item item-input" id="bucketList-label" style="padding-right:25px">
             <span class="input-label">Bucket Trip: </span>
-            <input id="bucketList-input" type="text" ng-model="bucketListText" placeholder="Enter" ng-focus="disableTap()">
-<!--            <button id="addTrip-button7" class="button button-positive icon ion-android-add" ng-click="addBucket()" style="padding-right:20px;margin-right:10px;">Add</button> -->
+            <input id="bucketList-input" type="text" ng-model="bucketListText" ng-focus="disableTap()">
         </label> 
         <div style="white-space:nowrap;padding: 10px;text-align: center;">
             <button id="bucketList_Delete" class="button button-positive icon ion-trash-a" ng-click="deleteBucket()" > Delete</button>

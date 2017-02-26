@@ -154,6 +154,30 @@ class TravelDataAccess
         $conn->close();
     }
 
+    // Insert a row of data into the table
+    function deleteBucketData( $ID )
+    {
+        // Create connection
+        $conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        } 
+        echoDebug( "Connected successfully" . "\n");
+
+        // sql to delete a record
+        $sql = "DELETE FROM BucketTrips WHERE id=".$ID;
+
+        if ($conn->query($sql) === TRUE) {
+            echoDebug( "Record deleted successfully");
+        } else {
+            echoDebug( "Error deleting record: " . $conn->error);
+        }
+
+        $conn->close();
+    }
+
     // Retrieve a row of data in the table
     function selectData( $sql )
     {

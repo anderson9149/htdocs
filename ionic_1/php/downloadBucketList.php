@@ -17,7 +17,7 @@ if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
         $returnResults[] = array (  'dbKey'=>$row["id"],
-                                    'BucketLocation'=>$row["BucketLocation"],
+                                    'bucketLocation'=>$row["BucketLocation"],
                                     'latlng'=>$row["latlng"],
                                     'reg_date'=>$row["reg_date"]);
     }

@@ -19,8 +19,7 @@ $idInserted = $traveldata->insertBucketData(    "appEmail",
 //************************************************
 // Create an array of the fields added to the DB and return it as JSON to the AJAX call
 // Construct the dB query to retrieve the trip info we just added
-//$sql = "SELECT ID, email, BucketLocation, latlng, req_date FROM BucketTrips where ID='".$idInserted."'";
-$sql = "SELECT * FROM BucketTrips WHERE ID=1";
+$sql = "SELECT * FROM BucketTrips WHERE ID='".$idInserted."'";
 
 $result = $traveldata->selectData($sql);
 $returnResults = array();
