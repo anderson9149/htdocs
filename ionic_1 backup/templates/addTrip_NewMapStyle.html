@@ -1,0 +1,45 @@
+<ion-view title="Add Trip" id="page6">
+  <ion-content padding="true" class="has-header">
+
+    <div ng-controller="addTripCtrl">
+        <label class="item item-input" id="addTrip-input3">
+          <span class="input-label">Trip Name: </span>
+          <input type="text" ng-model="tripText" placeholder="Type Name Here">
+        </label>
+        <label class="item item-input" id="addTrip-input4">
+          <span class="input-label">Location: </span>
+          <input type="text" ng-model="locationText" placeholder="">
+        </label>
+
+        <ng-map center="37.7699298, -122.4469157" zoom="12" on-click="vm.addMarker()">
+            <marker ng-repeat="pos in vm.positions" position="{{pos.lat}}, {{pos.lng}}"></marker>
+        </ng-map>
+        
+        <label class="item item-input" id="addTrip-input5">
+          <span class="input-label">Date: </span>
+          <input type="date" ng-model="dateText" placeholder="">
+        </label>
+        <label class="item item-input" id="addTrip-input5">
+          <span class="input-label">Cover Photo: </span>
+<!--          <input type="file" class="custom-file-input" ng-model="tripList.descriptionText" placeholder=""> -->
+<!--          <input ng-model="photo" onchange="angular.element(this).scope().file_changed(this)" type="file" accept="image/*" /> -->
+            <div file-select="file" "></div>
+        </label>
+        <label class="item item-input" id="addTrip-input5">
+          <span class="input-label">Description: </span>
+          <input type="text" ng-model="descriptionText" placeholder="">
+        </label>
+        
+        <button id="addTrip-button7" class="button button-positive  button-block icon ion-android-add" ng-click="addTrip()" >Add</button>     
+        
+<!--        <ion-spinner icon="spiral" ng-show="showSpinner" class="ng-hide" ></ion-spinner> -->
+<!--         <ion-spinner icon="spiral" ></ion-spinner> -->
+        
+        <div class="spinner" ng-show="showSpinner">
+            <ion-spinner icon="android"></ion-spinner>
+        </div>
+        
+    </div>
+      
+  </ion-content>
+</ion-view>

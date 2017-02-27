@@ -29,22 +29,22 @@ function ($scope, $stateParams, $rootScope, $ionicPopup) {
             });        
     };
     
-     // A confirm dialog
-     $scope.confirmDelete = function(trip) {
-       var confirmPopup = $ionicPopup.confirm({
-         title: 'Delete Trip',
-         template: 'Are you sure you want to delete this trip?'
-       });
+    // A confirm dialog
+    $scope.confirmDelete = function(trip) {
+        var confirmPopup = $ionicPopup.confirm({
+            title: 'Delete Trip',
+            template: 'Are you sure you want to delete this trip?'
+        });
 
-       confirmPopup.then(function(res) {
-         if(res) {
-            $scope.deleteTrip(trip); 
-            console.log('Delete Trip');
-         } else {
-            console.log('Do not delete the trip');
-         }
-       });
-     };
+        confirmPopup.then(function(res) {
+            if(res) {
+                $scope.deleteTrip(trip); 
+                console.log('Delete Trip');
+            } else {
+                console.log('Do not delete the trip');
+            }
+        });
+    };
  
 }])
    
@@ -142,7 +142,6 @@ function ($scope, $stateParams, $rootScope) {
     map.fitBounds(bounds);
  
 }])
-
 
 .controller('bucketListCtrl', ['$scope', '$stateParams', '$ionicPopup', '$ionicLoading', '$timeout', '$ionicPopover', '$rootScope', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
@@ -441,16 +440,6 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
             alertPopup.close(); //close the popup after 4 seconds
         }, 4000);
     };
-    
-}])
-
-
-.controller('settingsCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams) {
-
-
 }])
 
 .controller('addTripCtrl', ['$scope', '$stateParams', '$rootScope', '$ionicLoading', '$ionicPopup', '$timeout',
@@ -694,3 +683,106 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
 
 }])
   
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
+    $scope.username = AuthService.username();
+ 
+    $scope.$on(AUTH_EVENTS.notAuthorized, function(event) {
+        var alertPopup = $ionicPopup.alert({
+          title: 'Please login.',
+          template: 'You need to login to access this.'
+        });
+        alertPopup.then(function(res) {
+            console.log('login removed');
+            $state.go('tabsController.settings', {}, {reload: true});
+        });
+    });
+ 
+  $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
+    AuthService.logout();
+    $state.go('tabsController.settings');
+    var alertPopup = $ionicPopup.alert({
+      title: 'Session Lost!',
+      template: 'Please login again.'
+    });
+  });
+ 
+  $scope.setCurrentUsername = function(name) {
+    $scope.username = name;
+  };
+})
+
+.controller('settingsCtrl', function($scope, $rootScope, $state, $ionicPopup, AuthService) {
+    $scope.data = {};
+
+    console.log("In Setings. Logged in: " + $scope.username);
+    if($scope.username == ""){
+        $scope.loginMessage = "Please Login.";
+        $scope.showLogout = false;
+        $rootScope.hideTabs = 'tabs-item-hide';
+    } else{
+        $scope.loginMessage = "Logged in as " + $scope.username;
+        $scope.showLogout = true;
+        $rootScope.hideTabs = '';
+    }
+        
+    $scope.login = function(data) {
+            AuthService.login(data.username, data.password).then(function(authenticated) {        
+                $state.go('tabsController.settings', {}, {reload: true});
+                $scope.setCurrentUsername(data.username);
+        }, function(err) {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Login failed!',
+                template: 'Please check your credentials!'
+            });
+        });
+    };
+  
+    $scope.logout = function() {
+        AuthService.logout();
+        $scope.setCurrentUsername("");
+        $state.go('tabsController.settings', {}, {reload: true});
+    };
+    
+})
+
+.controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
+  $scope.logout = function() {
+    AuthService.logout();
+    $state.go('tabsController.settings');
+  };
+ 
+  $scope.performValidRequest = function() {
+    $http.get('http://localhost:8100/valid').then(
+      function(result) {
+        $scope.response = result;
+      });
+  };
+ 
+  $scope.performUnauthorizedRequest = function() {
+    $http.get('http://localhost:8100/notauthorized').then(
+      function(result) {
+        // No result here..
+      }, function(err) {
+        $scope.response = err;
+      });
+  };
+ 
+  $scope.performInvalidRequest = function() {
+    $http.get('http://localhost:8100/notauthenticated').then(
+      function(result) {
+        // No result here..
+      }, function(err) {
+        $scope.response = err;
+      });
+  };
+});
+
+/*
+.controller('settingsCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+// You can include any angular dependencies as parameters for this function
+// TIP: Access Route Parameters for your page via $stateParams.parameterName
+function ($scope, $stateParams) {
+
+
+}])
+*/

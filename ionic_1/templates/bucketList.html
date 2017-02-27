@@ -1,7 +1,5 @@
-<ion-view title="Bucket List" id="page4">
-
+<ion-view title="Bucket List" id="page4" ng-controller="bucketListCtrl">    
     <ion-content padding="true" class="has-header" scroll="false">
-        <div ng-controller="bucketListCtrl">
         <label class="item item-input" id="bucketList-label" style="padding-right:25px">
             <span class="input-label">Bucket Trip: </span>
             <input id="bucketList-input" type="text" ng-model="bucketListText" ng-focus="disableTap()">
@@ -13,7 +11,6 @@
             <button id="bucketList_Add" class="button button-positive icon ion-android-add" ng-click="addBucket()" > Add</button>
         </div>
             <div id="map2" style="width:100%;height:350px" data-tap-disabled="true"></div> 
-        </div>
     </ion-content>
 
 </ion-view>
