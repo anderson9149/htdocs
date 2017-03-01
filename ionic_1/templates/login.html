@@ -1,0 +1,21 @@
+<ion-view title="Login" id="page5" ng-controller="DashCtrl" hide-nav-bar="true">
+            
+    <div class="imageContainer"> </div>   
+           
+    <ion-content padding="true" class="center" >
+        <div class="row"><div class="col text-center">
+                <h3 class="title">Please login</h3>      
+        </div></div>
+        <div class="list list-inset">
+            <label class="item item-input">
+            <input type="text" placeholder="Username" ng-model="data.username">
+            </label>
+            <label class="item item-input">
+                <input type="password" placeholder="Password" ng-model="data.password">
+            </label>
+        </div>
+        <button class="button button-positive button-block" ng-click="login(data)">Login</button>
+        </div>      
+    </ion-content>
+        
+</ion-view>

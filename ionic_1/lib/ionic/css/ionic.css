@@ -9890,3 +9890,35 @@ display:none !important;
     margin:0 auto;
     width:100%;
 }
+
+/*          
+.scroll-content {
+    background: url(../../../img/LoginPic4.png) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+*/
+
+.imageContainer {
+                position:fixed !important;
+                position:absolute;
+                top:0;
+                right:0;
+                bottom:0;
+                left:0;
+                width:488px; 
+                height:712px;                                       
+                //background-size: 488px 712px;
+                background-size: cover;
+                background-image: url("../../../img/LoginPic4.png");
+                }
+
+/*
+    width:488px; 
+    height:2000px;                                       
+    //background-size: 488px 712px;
+    background-size: cover;
+    background-image: url("../../../img/LoginPic4.png");
+*/

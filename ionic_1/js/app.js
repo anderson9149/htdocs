@@ -27,7 +27,7 @@ angular.module('app', ['ionic', 'app.constants', 'app.controllers', 'app.routes'
         .respond(403, {message: "Not Authorized"});
   $httpBackend.whenGET(/templates\/\w+.*/).passThrough();
 
-    $rootScope.hideTabs = '';
+  $rootScope.hideTabs = '';
 
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

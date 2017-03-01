@@ -55,16 +55,6 @@ angular.module('app.routes', [])
             authorizedRoles: [USER_ROLES.admin]
         }
     })
-    
-
-    .state('tabsController.dashboard', {
-        url: '/page7',
-        views: {
-            'dash-tab': {
-                templateUrl: 'templates/dashboard.html',
-            }
-        }
-    })
 
     .state('tabsController.settings', {
         url: '/page5',
@@ -75,6 +65,15 @@ angular.module('app.routes', [])
         }
     })
     
+    .state('tabsController.dashboard', {
+        url: '/page7',
+        views: {
+            'dash-tab': {
+                templateUrl: 'templates/login.html',
+            }
+        }
+    })
+
     .state('tabsController', {
         url: '/page1',
         templateUrl: 'templates/tabsController.html',

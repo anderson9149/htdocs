@@ -738,19 +738,22 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
     };
   
     $scope.logout = function() {
-        AuthService.logout();
-        $scope.setCurrentUsername("");
-        $state.go('tabsController.settings', {}, {reload: true});
+        //AuthService.logout();
+        //$scope.setCurrentUsername("");
+        $state.go('tabsController.dashboard');
     };
     
 })
 
-.controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
-  $scope.logout = function() {
-    AuthService.logout();
-    $state.go('tabsController.settings');
-  };
- 
+.controller('DashCtrl', function($scope, $state, $rootScope, $http, $ionicPopup, AuthService) {
+    $rootScope.hideTabs = 'tabs-item-hide';    
+    $scope.login = function() {
+      console.log("logout called");
+      //AuthService.logout();
+      $state.go('tabsController.settings');
+    };
+  
+ /*
   $scope.performValidRequest = function() {
     $http.get('http://localhost:8100/valid').then(
       function(result) {
@@ -775,6 +778,7 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         $scope.response = err;
       });
   };
+*/
 });
 
 /*
