@@ -693,13 +693,13 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         });
         alertPopup.then(function(res) {
             console.log('login removed');
-            $state.go('tabsController.settings', {}, {reload: true});
+            $state.go('tabsController.dashboard');
         });
     });
  
   $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
     AuthService.logout();
-    $state.go('tabsController.settings');
+    $state.go('tabsController.dashboard');
     var alertPopup = $ionicPopup.alert({
       title: 'Session Lost!',
       template: 'Please login again.'
@@ -712,30 +712,9 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
 })
 
 .controller('settingsCtrl', function($scope, $rootScope, $state, $ionicPopup, AuthService) {
-    $scope.data = {};
-
-    console.log("In Setings. Logged in: " + $scope.username);
-    if($scope.username == ""){
-        $scope.loginMessage = "Please Login.";
-        $scope.showLogout = false;
-        $rootScope.hideTabs = 'tabs-item-hide';
-    } else{
-        $scope.loginMessage = "Logged in as " + $scope.username;
-        $scope.showLogout = true;
-        $rootScope.hideTabs = '';
-    }
-        
-    $scope.login = function(data) {
-            AuthService.login(data.username, data.password).then(function(authenticated) {        
-                $state.go('tabsController.settings', {}, {reload: true});
-                $scope.setCurrentUsername(data.username);
-        }, function(err) {
-            var alertPopup = $ionicPopup.alert({
-                title: 'Login failed!',
-                template: 'Please check your credentials!'
-            });
-        });
-    };
+    $scope.loginMessage = "Logged in as " + $scope.username;
+    $scope.showLogout = true;
+    $rootScope.hideTabs = '';
   
     $scope.logout = function() {
         //AuthService.logout();
@@ -746,13 +725,45 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
 })
 
 .controller('DashCtrl', function($scope, $state, $rootScope, $http, $ionicPopup, AuthService) {
-    $rootScope.hideTabs = 'tabs-item-hide';    
-    $scope.login = function() {
-      console.log("logout called");
-      //AuthService.logout();
-      $state.go('tabsController.settings');
-    };
-  
+    $scope.data = {};
+    $rootScope.hideTabs = 'tabs-item-hide';
+    $scope.hideSignIn = "block";
+    $scope.hideNewUser = "none";
+    $scope.hideForgotPassword = "none";
+            
+    $scope.login = function(data) {
+        console.log("Name: " + data.username + " Password: " + data.password);
+        AuthService.login(data.username, data.password).then(function(authenticated) {        
+            $rootScope.hideTabs = '';
+            $scope.setCurrentUsername(data.username);
+            $state.go('tabsController.tripList');
+        }, function(err) {
+            var alertPopup = $ionicPopup.alert({
+                title: 'Sign in failed',
+                template: 'Please check your credentials.'
+            });
+        });
+    }
+
+    // Add a trip function to call from HTML
+    $scope.addUser = function() {
+        $scope.hideSignIn = "none";
+        $scope.hideNewUser = "block";
+        $scope.hideForgotPassword = "none";
+    }
+    
+    $scope.returnToSignIn  = function() {
+        $scope.hideSignIn = "block";
+        $scope.hideNewUser = "none"; 
+        $scope.hideForgotPassword = "none";
+    }
+    
+    $scope.fogotPassword  = function() {
+        $scope.hideSignIn = "none";
+        $scope.hideNewUser = "none"; 
+        $scope.hideForgotPassword = "block";
+    }
+    
  /*
   $scope.performValidRequest = function() {
     $http.get('http://localhost:8100/valid').then(
@@ -779,7 +790,7 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
       });
   };
 */
-});
+})
 
 /*
 .controller('settingsCtrl', ['$scope', '$stateParams', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller

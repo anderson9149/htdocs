@@ -1,18 +1,9 @@
-<ion-view title="Settings" id="page5" ng-controller="settingsCtrl" hide-nav-bar="{{!showLogout}}">
+<ion-view title="Settings" id="page5" ng-controller="settingsCtrl" >
     <ion-content padding="true" class="center" >
         <div class="row"><div class="col text-center">
                 <h3 class="title">{{loginMessage}}</h3>      
         </div></div>
-        <div class="list list-inset" ng-show="!showLogout">
-            <label class="item item-input">
-            <input type="text" placeholder="Username" ng-model="data.username">
-            </label>
-            <label class="item item-input">
-                <input type="password" placeholder="Password" ng-model="data.password">
-            </label>
-        </div>
-        <button class="button button-positive button-block" ng-click="login(data)" ng-show="!showLogout">Login</button>
-        <button class="button button-positive button-block" ng-click="logout()" ng-show="showLogout">Logout</button>
+        <button class="button button-positive button-block" ng-click="logout()" >Logout</button>
         </div>      
     </ion-content>
 </ion-view>

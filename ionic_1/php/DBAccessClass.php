@@ -21,7 +21,6 @@ class TravelDataAccess
         $echoDebug = FALSE;
 /*
         // Establish AWS connection
-        //$this->servername = 'testdb.chsdaxp5cy30.us-east-1.rds.amazonaws.com';
         $this->servername = 'travelappdbinstance1.chsdaxp5cy30.us-east-1.rds.amazonaws.com';
         $this->dbname = 'travelAppV1';
         $this->username = 'anderson9149';

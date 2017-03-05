@@ -116,11 +116,14 @@ angular.module('app', ['ionic', 'app.constants', 'app.controllers', 'app.routes'
 })
 
 .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+    $state.go('tabsController.dashboard');
+/*
   $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
     if ('data' in next && 'authorizedRoles' in next.data) {
         var authorizedRoles = next.data.authorizedRoles;
         if (!AuthService.isAuthorized(authorizedRoles)) {
           event.preventDefault();
+          console.log("current state: " + $state.current);
           $state.go($state.current, {}, {reload: true});
           $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
         }
@@ -134,6 +137,7 @@ angular.module('app', ['ionic', 'app.constants', 'app.controllers', 'app.routes'
       }
       
   });
+*/
 })
 
 /*

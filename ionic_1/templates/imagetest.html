@@ -45,6 +45,23 @@ and open the template in the editor.
 }
 
 /*
+.centerContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+*/
+
+.centerContainer {
+  height: 100%;
+  display: block;
+  vertical-align: middle;
+}
+
+/*
 html { 
   background: url(images/LoginPic4.png) no-repeat center center fixed; 
   -webkit-background-size: cover;
@@ -62,6 +79,13 @@ html {
         </div>
 -->
         HELLO!
-        <div class="imageContainer">Some Text </div>
+<!--        <div class="imageContainer">Some Text </div>
+-->
+
+<div class="centerContainer">
+        <img src="../img/logo.png" style="width:100px; height:75px; display: block; margin: auto;">
+        <img src="../img/logo.png">
+</div>
+                    
     </body>
 </html>

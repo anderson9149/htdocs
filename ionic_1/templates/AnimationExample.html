@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+        <style>
+            //body {
+            //    overflow-x: hidden;
+            //}
+
+            .box-wrapper {
+                -webkit-transition-duration: 600ms;
+                transition-duration: 600ms;
+            }
+
+            .box-wrapper.loading:nth-child(odd) {
+                transform: translate(100%);
+                -webkit-transform: translate(100%);    
+            }
+
+            .box-wrapper.loading:nth-child(even) {
+                transform: translate(-100%);        
+                -webkit-transform: translate(-100%);
+            }
+            
+            .box-wrapper:nth-child(odd) .box {
+                background: orange;
+            }
+
+            .box-wrapper:nth-child(even) .box {
+                background: red;
+            }
+
+            .box {
+                content: "Hello";
+                display: block;
+                margin: auto;
+                width: 100px;
+                height: 100px;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <button type="button">Start Animation</button>
+        <div class="box-wrapper loading"><div class="box"> Hello </div></div>
+        <div class="box-wrapper loading"><div class="box"></div></div>
+        <div class="box-wrapper loading"><div class="box"></div></div>
+        <div class="box-wrapper loading"><div class="box"></div></div>
+        <div class="box-wrapper loading"><div class="box"></div></div>
+        <div class="box-wrapper loading"><div class="box"></div></div>
+
+    <script>
+        /*
+        $('.box-wrapper').each(function(index, element) {
+            setTimeout(function(){
+                element.classList.remove('loading');
+            }, index * 500);
+        });
+        */
+    </script>
+    
+    </body>
+</html>

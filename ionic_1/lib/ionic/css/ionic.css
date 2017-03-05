@@ -9461,6 +9461,9 @@ a.button {
 .padding-horizontal {
   padding-left: 10px; }
 
+.loginPadding {
+  padding: 50px; }
+
 /**
  * Scrollable iFrames
  * --------------------------------------------------
@@ -9913,7 +9916,46 @@ display:none !important;
                 //background-size: 488px 712px;
                 background-size: cover;
                 background-image: url("../../../img/LoginPic4.png");
+                 -webkit-filter: blur(5px);
                 }
+
+.logoimage{
+    background-image: url("../../../img/logo.png");
+    width:100px; height:75px; display: block; margin: auto;
+}
+
+.centerContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.verticalContainer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    //-moz-transform: translateX(-50%) translateY(-50%);
+    //-webkit-transform: translateX(-50%) translateY(-50%);
+    //transform: translateX(-50%) translateY(-50%);
+}
+
+.vertical-align-content > *
+{
+     //display: flex!important;
+     //align-content: center!important;
+     //align-items: center!important;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-align-items: center;
+    align-items: center;
+    height: 500px;
+}
+
 
 /*
     width:488px; 

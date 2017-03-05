@@ -1,21 +1,78 @@
 <ion-view title="Login" id="page5" ng-controller="DashCtrl" hide-nav-bar="true">
             
-    <div class="imageContainer"> </div>   
+    <div class="imageContainer centerContainer"> </div>   
            
-    <ion-content padding="true" class="center" >
-        <div class="row"><div class="col text-center">
-                <h3 class="title">Please login</h3>      
-        </div></div>
-        <div class="list list-inset">
-            <label class="item item-input">
-            <input type="text" placeholder="Username" ng-model="data.username">
-            </label>
-            <label class="item item-input">
-                <input type="password" placeholder="Password" ng-model="data.password">
-            </label>
-        </div>
-        <button class="button button-positive button-block" ng-click="login(data)">Login</button>
-        </div>      
+    <ion-content class="loginPadding" >
+            <br> <br> <br>
+            <img src="img/logo.png" style="width:100px; height:75px; display: block; margin: auto;">
+            
+            <div style="display:{{hideSignIn}}">
+                <div class="list list-inset">
+                    <label class="item item-input">
+                        <i class="icon ion-email placeholder-icon"></i>
+                        <input type="text" placeholder="Email adress" ng-model="data.username">
+                    </label>
+                    <label class="item item-input">
+                        <i class="icon ion-locked placeholder-icon"></i>
+                        <input type="password" placeholder="********" ng-model="data.password"> 
+                    </label>
+                </div>
+                <button class="button button-positive button-block" ng-click="login(data)">Sign in</button>
+                <br>
+                <button class="button button-positive button-block" ng-click="login(data)">Sign in with Facebook</button>
+                <p style="text-align:left;">
+                    <a style="color: white" ng-click="fogotPassword()" >Forgot Password?</a>
+                    <span style="float:right;">
+                        <a style="color: white" ng-click="addUser()" >New User Sign Up</a>
+                    </span>
+                </p>
+            </div>
+            
+            <div style="display:{{hideNewUser}}">
+<!--
+                <br>
+                <p style="color: white; font-size:20px; text-align:center">Create User</p>
+-->
+                <div class="list list-inset">
+                    <label class="item item-input">
+                        <i class="icon ion-person placeholder-icon"></i>
+                        <input type="text" placeholder="New User Name" ng-model="data.username">
+                    </label>
+                    <label class="item item-input">
+                        <i class="icon ion-email placeholder-icon"></i>
+                        <input type="text" placeholder="Email adress" ng-model="data.username">
+                    </label>
+                    <label class="item item-input">
+                        <i class="icon ion-locked placeholder-icon"></i>
+                        <input type="password" placeholder="********" ng-model="data.password"> 
+                    </label>
+                </div>
+                <button class="button button-positive button-block" ng-click="login(data)">Sign Up</button>
+<!--
+                <button class="button button-positive button-block icon ion-arrow-left-c" ng-click="returnToSignIn()"> &nbsp Return To Sign In</button>
+-->
+                <p style="text-align:center;">
+                    <a style="color: white;" ng-click="returnToSignIn()">Return To Sign In</a>
+                </p>
+            </div>
+            
+            <div style="display:{{hideForgotPassword}}">
+                <br>
+                <p style="color: white; font-size:15px; text-align:center">Enter your email and we'll send you <br> a reset link to create a new password</p>
+                <div class="list list-inset">
+                    <label class="item item-input">
+                        <i class="icon ion-email placeholder-icon"></i>
+                        <input type="text" placeholder="Email adress" ng-model="data.username">
+                    </label>
+                </div>
+                <button class="button button-positive button-block" ng-click="login(data)">Send Reset Email</button>
+                <p style="text-align:center;">
+                    <a style="color: white;" ng-click="returnToSignIn()">Return To Sign In</a>
+                </p>
+<!--
+                <button class="button button-positive button-block icon ion-arrow-left-c" ng-click="returnToSignIn()"> &nbsp Return To Sign In</button>
+-->
+            </div>
     </ion-content>
         
 </ion-view>
