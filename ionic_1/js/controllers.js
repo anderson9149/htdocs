@@ -744,6 +744,131 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
             });
         });
     }
+    
+    $scope.createNewUser = function(data) {
+        // Force the data to string types for manipulation
+        var usernameStr = "";
+        if(typeof data !== 'undefined' && typeof data.newUsername !== 'undefined')
+            usernameStr = String(data.newUsername);
+        var emailStr = "";
+        if(typeof data !== 'undefined' && typeof data.newUsernameEmail !== 'undefined')
+            emailStr = String(data.newUsernameEmail);
+        var passwordStr = "";
+        if(typeof data !== 'undefined' && typeof data.newUserPassword !== 'undefined')
+            passwordStr = String(data.newUserPassword);
+        // Trim the strings of white space
+        usernameStr.trim();
+        emailStr.trim();
+        // Log the results
+        console.log("newUserName: " + usernameStr);
+        console.log("newUserEmail: " + emailStr);        
+        // vars to track if the inputs are valid
+        var validUserName = false;
+        var validEmail = false;
+        var validPassword = false;        
+        // Ensure the username entered is not empty
+        if(usernameStr != "")
+            validUserName = true;
+        // Confirm the entered email is valid
+        if( validateEmail(emailStr) ){
+            console.log("Valid Email");
+            validEmail = true;
+        }
+        else {
+            console.log("Invalid Email");
+            validEmail = false;
+        }
+        // Confirm password entered is valid
+        if( validatePassword(passwordStr) ){
+            console.log("Valid Password");
+            validPassword = true;
+        }
+        else {
+            console.log("Invalid Password");
+            validPassword = false;
+        }
+        
+        // If each entry is valid create the user
+        if(validUserName && validEmail && validPassword){
+            var alertPopup = $ionicPopup.alert({
+                    title: 'Creating User...',
+                    template: usernameStr
+            });           
+        } else
+        if (!validUserName){
+             var alertPopup = $ionicPopup.alert({
+                    title: 'Can not create user.',
+                    template: 'Please enter a valid user name'
+            });            
+        } else
+        if (!validEmail){
+             var alertPopup = $ionicPopup.alert({
+                    title: 'Can not create user.',
+                    template: 'Please enter a valid email'
+            });            
+        } else
+        if (!validPassword){
+             var alertPopup = $ionicPopup.alert({
+                    title: 'Can not create user.',
+                    template: 'Please enter a valid password.  <br>Must be at least 8 characters long. <br>Must contain a lowercase letter. <br>Must contain an uppercase letter. <br>Must contain a number or special character.'
+            });            
+        }
+            
+        
+
+    }
+
+    // Function to validate email
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    } 
+    
+    function validatePassword(password){
+        console.log("validate Password: " + password);
+        // Check the length
+        if( password.length >= 8 ) {
+            //return true;
+        }
+        else{
+            console.log("Password too short");
+            return false;
+        }
+            
+        
+        // Check for lower case 
+        var regex = /^(?=.*[a-z]).+$/;
+        if( regex.test(password) ) {
+            //return true;
+        }
+        else{
+            console.log("Does Not Contain lower Case letter");
+            return false;
+        }
+        
+        // Check for Upper Case
+        regex = /^(?=.*[A-Z]).+$/;
+        if( regex.test(password) ) {
+            //return true;
+        }
+        else{
+            console.log("Does Not Contain Uper Case letter");
+            return false;
+        }
+        
+        // Check for special charecters
+        regex = /^(?=.*[0-9_\W]).+$/;
+        if( regex.test(password) ) {
+            //return true;
+        }
+        else{
+            console.log("Does Not Contain Specail character");
+            return false;
+        }
+        
+        //All checks passed
+        return true;
+    }
 
     // Add a trip function to call from HTML
     $scope.addUser = function() {
