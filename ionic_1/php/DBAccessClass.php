@@ -11,14 +11,13 @@ class TravelDataAccess
     //-----Initialization -------
     function setupDBVars()
     {
-
         // Establish Localhost DB connection
         $this->servername = 'localhost';
         $this->dbname = 'travelAppV1';
         $this->username = 'Developer';
         $this->password = 'password';
 
-        $echoDebug = FALSE;
+        $echoDebug = TRUE;
 /*
         // Establish AWS connection
         $this->servername = 'travelappdbinstance1.chsdaxp5cy30.us-east-1.rds.amazonaws.com';
@@ -37,14 +36,14 @@ class TravelDataAccess
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } 
-        echoDebug( "Connected successfully" . "\n" );
+        error_log( "Connected successfully" );
 
         // Create database
         $sql = "CREATE DATABASE ".$this->dbname;
         if ($conn->query($sql) === TRUE) {
-            echoDebug( "Database created successfully" . "\n");
+            error_log( "Database created successfully" );
         } else {
-            echoDebug( "Error creating database: " . $conn->error . "\n");
+            error_log( "Error creating database: " . $conn->error );
         }
         $conn->close();
     }
@@ -58,15 +57,14 @@ class TravelDataAccess
         // Check connection
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
-        } 
-        if($echoDebug){
-            echo "Connected successfully" . "\n";
         }
+        error_log( "Connected successfully" );
+
 
         if ($conn->query($sql) === TRUE) {
-            echoDebug( "Table created successfully" . "\n");
+            error_log( "Table created successfully" );
         } else {
-            echoDebug( "Error creating table: " . $conn->error . "\n");
+            error_log( "Error creating table: " . $conn->error );
         }
         $conn->close();
     }
@@ -81,18 +79,18 @@ class TravelDataAccess
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } 
-        echoDebug( "Connected successfully" . "\n");
+        error_log( "Connected successfully" );
 
         $sql = "INSERT INTO UserTrips (email, username, password, tripText, archived, tripLocation, date, tripDescriptionText, latlng, imageLocation)
         VALUES ('".$insertEmail."', '".$insertUserName."', '".$insertPassword."', '".$insertTripText."', '".$insertArchived."', '".$tripLocation."', '".$insertdate."', '".$tripdescriptionText."', '".$latlng."', '".$insertImageLocation."')";
 
         if ($conn->query($sql) === TRUE) {
-            echoDebug( "New record created successfully");
+            error_log( "New record created successfully");
         } else {
-            echoDebug( "Error: " . $sql . "\n" . $conn->error);
+            error_log( "Error: " . $sql . "\n" . $conn->error);
         }
 
-        echoDebug( "******************* New Record has id: " . $conn->insert_id . "\n");
+        error_log( "******************* New Record has id: " . $conn->insert_id );
         $idInserted = $conn->insert_id;
 
         $conn->close();
@@ -110,18 +108,47 @@ class TravelDataAccess
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } 
-        echoDebug( "Connected successfully" . "\n");
+        error_log( "Connected successfully" );
 
         $sql = "INSERT INTO BucketTrips (email, BucketLocation, latlng)
         VALUES ('".$insertEmail."', '".$bucketLocation."', '".$latlng."')";
 
         if ($conn->query($sql) === TRUE) {
-            echoDebug( "New record created successfully");
+            error_log( "New record created successfully");
         } else {
-            echoDebug( "Error: " . $sql . "\n" . $conn->error);
+            error_log( "Error: " . $sql . "\n" . $conn->error);
         }
 
-        echoDebug( "******************* New Record has id: " . $conn->insert_id . "\n");
+        error_log( "******************* New Record has id: " . $conn->insert_id );
+        $idInserted = $conn->insert_id;
+
+        $conn->close();
+
+        return $idInserted;
+    }
+
+    // Insert a row of data into the BucketTrips table
+    function insertNewUserData( $newUser, $email, $password)
+    {
+        // Create connection
+        $conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        } 
+        error_log( "Connected successfully" );
+
+        $sql = "INSERT INTO Users (userName, email, password)
+        VALUES ('".$newUser."', '".$email."', '".$password."')";
+
+        if ($conn->query($sql) === TRUE) {
+            error_log( "New record created successfully");
+        } else {
+            error_log( "Error: " . $sql . "\n" . $conn->error);
+        }
+
+        error_log( "******************* New Record has id: " . $conn->insert_id );
         $idInserted = $conn->insert_id;
 
         $conn->close();
@@ -139,15 +166,15 @@ class TravelDataAccess
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } 
-        echoDebug( "Connected successfully" . "\n");
+        error_log( "Connected successfully" );
 
         // sql to delete a record
         $sql = "DELETE FROM UserTrips WHERE id=".$ID;
 
         if ($conn->query($sql) === TRUE) {
-            echoDebug( "Record deleted successfully");
+            error_log( "Record deleted successfully");
         } else {
-            echoDebug( "Error deleting record: " . $conn->error);
+            error_log( "Error deleting record: " . $conn->error);
         }
 
         $conn->close();
@@ -163,15 +190,15 @@ class TravelDataAccess
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } 
-        echoDebug( "Connected successfully" . "\n");
+        error_log( "Connected successfully" );
 
         // sql to delete a record
         $sql = "DELETE FROM BucketTrips WHERE id=".$ID;
 
         if ($conn->query($sql) === TRUE) {
-            echoDebug( "Record deleted successfully");
+            error_log( "Record deleted successfully");
         } else {
-            echoDebug( "Error deleting record: " . $conn->error);
+            error_log( "Error deleting record: " . $conn->error);
         }
 
         $conn->close();
@@ -187,7 +214,7 @@ class TravelDataAccess
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         } 
-        echoDebug( "Connected successfully" . "\n");
+        error_log( "Connected successfully" );
 
         $result = $conn->query($sql);
         

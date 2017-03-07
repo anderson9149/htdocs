@@ -724,7 +724,7 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
     
 })
 
-.controller('DashCtrl', function($scope, $state, $rootScope, $http, $ionicPopup, AuthService) {
+.controller('DashCtrl', function($scope, $state, $rootScope, $http, $ionicPopup, $ionicLoading, AuthService) {
     $scope.data = {};
     $rootScope.hideTabs = 'tabs-item-hide';
     $scope.hideSignIn = "block";
@@ -790,10 +790,70 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         
         // If each entry is valid create the user
         if(validUserName && validEmail && validPassword){
+            /*
             var alertPopup = $ionicPopup.alert({
                     title: 'Creating User...',
                     template: usernameStr
-            });           
+            });
+            */
+            
+            console.log("Create the new user: " + usernameStr + " Email: " + emailStr + "  Password: " + passwordStr);
+            //$scope.showSpinner = true;
+
+            $ionicLoading.show({
+                template: 'Adding New User...',
+                duration: 10000
+            }).then(function(){
+                console.log("The loading indicator is now displayed");
+            });
+            
+            /*
+            // Might need to handle a case when the AJAX doesn't return, TBD
+            $timeout(function () {
+                $ionicLoading.hide();
+                $scope.showSpinner = true;
+            }, 10000);
+            */
+
+            // AJAX call to send the photo and other tipr data to the server    
+            $.ajax({
+                url: "php/createUser.php?" +    "newUser=" + usernameStr +
+                                                "&email=" + emailStr + 
+                                                "&userPassword=" + passwordStr, // Url to which the request is send
+                type: "POST",             // Type of request to be send, called as method
+                contentType: false,       // The content type used when sending data to the server.
+                cache: false,             // To unable request pages to be cached
+                processData:false,        // To send DOMDocument or non processed data file it is set to false
+                success: function(data)   // A function to be called if request succeeds
+                    {
+                    console.log(data);
+                    var myObj = $.parseJSON(data);
+                    //you can now access data like this:
+                    console.log("dbKey: " + myObj[0].dbKey);
+                    console.log("newUser: " + myObj[0].newUser);
+                    console.log("email: " + myObj[0].email);
+                    console.log("userPassword: " + myObj[0].userPassword);
+                    /*
+                    $rootScope.bucketTrips.push({   dbKey:parseInt(myObj[0].dbKey),
+                                                    bucketLocation:myObj[0].bucketLocation,
+                                                    latlng:myObj[0].latlng,
+                                                    eg_date:myObj[0].reg_date,});
+                    console.log("************ BucketTrips contents after add");
+                    for(var i = 0; i < $rootScope.bucketTrips.length; i++){
+                        console.log("ID: " + i + " BucketLocaiton: " + $rootScope.bucketTrips[i].bucketLocation);
+                    }
+                    */
+                    // Hide the loading popup
+                    $ionicLoading.hide();
+                    /*
+                    $scope.showSpinner = false;
+                    // Configure and show the popup that the trip was added
+                    $scope.popupAddedText1 = myObj[0].bucketLocation;
+                    $scope.popupAddedText2 = "Bucket Trip Added!";
+                    $scope.showAlert();
+                    */              
+                }
+            });
         } else
         if (!validUserName){
              var alertPopup = $ionicPopup.alert({
@@ -810,11 +870,13 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         if (!validPassword){
              var alertPopup = $ionicPopup.alert({
                     title: 'Can not create user.',
-                    template: 'Please enter a valid password.  <br>Must be at least 8 characters long. <br>Must contain a lowercase letter. <br>Must contain an uppercase letter. <br>Must contain a number or special character.'
+                    template:   'Please enter a valid password. <br>\n\
+                                Must be at least 8 characters long. <br>\n\
+                                Must contain a lowercase letter. <br>\n\
+                                Must contain an uppercase letter. <br>\n\
+                                Must contain a number or special character.'
             });            
         }
-            
-        
 
     }
 
@@ -827,41 +889,28 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
     function validatePassword(password){
         console.log("validate Password: " + password);
         // Check the length
-        if( password.length >= 8 ) {
-            //return true;
-        }
-        else{
+        if( !( password.length >= 8 ) ){
             console.log("Password too short");
             return false;
-        }
+            }
             
-        
         // Check for lower case 
         var regex = /^(?=.*[a-z]).+$/;
-        if( regex.test(password) ) {
-            //return true;
-        }
-        else{
+        if( !(regex.test(password)) ) {
             console.log("Does Not Contain lower Case letter");
             return false;
         }
         
         // Check for Upper Case
         regex = /^(?=.*[A-Z]).+$/;
-        if( regex.test(password) ) {
-            //return true;
-        }
-        else{
+        if( !(regex.test(password)) ) {
             console.log("Does Not Contain Uper Case letter");
             return false;
         }
         
         // Check for special charecters
         regex = /^(?=.*[0-9_\W]).+$/;
-        if( regex.test(password) ) {
-            //return true;
-        }
-        else{
+        if( !(regex.test(password)) ) {
             console.log("Does Not Contain Specail character");
             return false;
         }
