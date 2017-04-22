@@ -1,9 +1,16 @@
 <ion-view title="Settings" id="page5" ng-controller="settingsCtrl" >
     <ion-content padding="true" class="center" >
-        <div class="row"><div class="col text-center">
-                <h3 class="title">{{loginMessage}}</h3>      
-        </div></div>
+        <div class="row">
+            <div class="col text-center">
+                <div class="title">{{loginMessage}}</div>      
+            </div>
+        </div>
         <button class="button button-positive button-block" ng-click="logout()" >Logout</button>
+        <label class="item item-input" id="addProfilePic">
+            <span class="input-label">Profile Photo: </span>
+            <div file-select="file" "></div>
+        </label>
+        <button class="button button-positive button-block" ng-click="addProfilePicture()" >Add Profile Picture</button>
         </div>      
     </ion-content>
 </ion-view>

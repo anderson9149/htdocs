@@ -45,74 +45,7 @@ angular.module('app', ['ionic', 'app.constants', 'app.controllers', 'app.routes'
     console.log("********** In Angular Constructor")
     $rootScope.testTrips = [];
     $rootScope.bucketTrips = [];
-    
-    // AJAX call to send the photo and other tipr data to the server   
-    $.ajax({
-        url: "php/download.php?",
-        type: "POST",             // Type of request to be send, called as method
-        contentType: false,       // The content type used when sending data to the server.
-        cache: false,             // To unable request pages to be cached
-        processData:false,        // To send DOMDocument or non processed data file it is set to false
-        success: function(data)   // A function to be called if request succeeds
-            {
-            console.log(data);
-            if(data != "0 results")
-                {
-                var myObj = $.parseJSON(data);
-                for(var i = 0; i < myObj.length; i++) {
-                    var obj = myObj[i];
-                    //access data like this:
-                    console.log("dbKey: " + parseInt(myObj[i].dbKey) );
-                    console.log("tripName: " + myObj[i].tripName);
-                    console.log("archived: " + myObj[i].archived);
-                    console.log("location: " + myObj[i].location);
-                    console.log("date: " + myObj[i].date);
-                    console.log("descriptionText: " + myObj[i].descriptionText);
-                    console.log("latlng: " + myObj[i].latlng);
-                    console.log("imageLocation: " + myObj[i].imageLocation);
-                    $rootScope.testTrips.push({     dbKey:parseInt(myObj[i].dbKey),
-                                                    text:myObj[i].tripName,
-                                                    archived:myObj[i].archived,
-                                                    location:myObj[i].location,
-                                                    date:myObj[i].date,
-                                                    descriptionText:myObj[i].descriptionText,
-                                                    latlng:myObj[i].latlng,                                                    
-                                                    image:myObj[i].imageLocation});
-                    }
-                }
-            } 
-        });
-
-    // AJAX call to send the photo and other tipr data to the server   
-    $.ajax({
-        url: "php/downloadBucketList.php?",
-        type: "POST",             // Type of request to be send, called as method
-        contentType: false,       // The content type used when sending data to the server.
-        cache: false,             // To unable request pages to be cached
-        processData:false,        // To send DOMDocument or non processed data file it is set to false
-        success: function(data)   // A function to be called if request succeeds
-            {
-            console.log(data);
-            if(data != "0 results")
-                {
-                var myObj = $.parseJSON(data);
-                for(var i = 0; i < myObj.length; i++) {
-                    var obj = myObj[i];
-                    //access data like this:
-                    console.log("dbKey: " + parseInt(myObj[i].dbKey) );
-                    console.log("bucketLocation: " + myObj[i].bucketLocation);
-                    console.log("latlng: " + myObj[i].latlng);
-                    console.log("reg_date: " + myObj[i].reg_date);
-                    $rootScope.bucketTrips.push({   dbKey:parseInt(myObj[i].dbKey),
-                                                    bucketLocation:myObj[i].bucketLocation,
-                                                    latlng:myObj[i].latlng,
-                                                    eg_date:myObj[i].reg_date,});
-                    }
-                }
-            } 
-        });
-        
-  //$rootScope.test = 0;
+    $rootScope.profilePic = "php/upload/No-Images.png";
 })
 
 .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {

@@ -4,7 +4,7 @@
     <div ng-controller="tripListCtrl">        
         <div class="list card" ng-repeat="trip in testTrips | orderBy:'-dbKey' ">
             <div class="item item-avatar" >
-                <img src="img/ProfileExample.jpg">
+                <img ng-src="{{profilePic}}">
                 <h2> {{ trip.text }} </h2>
                 <p ng-if="trip.date!=''"> {{ trip.location }} on {{ trip.date }} </p>
                 <p ng-if="trip.date==''"> {{ trip.location }} </p>

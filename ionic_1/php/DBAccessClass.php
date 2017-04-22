@@ -127,7 +127,7 @@ class TravelDataAccess
         return $idInserted;
     }
 
-    // Insert a row of data into the BucketTrips table
+    // Insert a new user table
     function insertNewUserData( $newUser, $email, $password)
     {
         // Create connection
@@ -139,8 +139,8 @@ class TravelDataAccess
         } 
         error_log( "Connected successfully" );
 
-        $sql = "INSERT INTO Users (userName, email, password)
-        VALUES ('".$newUser."', '".$email."', '".$password."')";
+        $sql = "INSERT INTO Users (userName, email, password, ProfileImage)
+        VALUES ('".$newUser."', '".$email."', '".$password."', 'upload/No-Images.png')";
 
         if ($conn->query($sql) === TRUE) {
             error_log( "New record created successfully");
@@ -156,7 +156,33 @@ class TravelDataAccess
         return $idInserted;
     }
 
-    // Insert a row of data into the table
+    // Insert a new profile picture into the table
+    function insertNewProfilePhoto( $user, $profilePath)
+    {
+        // Create connection
+        $conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        } 
+        error_log( "Connected successfully" );
+        $insertSuccess = FALSE;
+
+        $sql = "UPDATE Users SET ProfileImage='" . $profilePath . "' WHERE email='" . $user . "'";
+        if ($conn->query($sql) === TRUE) {
+            error_log( "Set the new profile path successfully: " . $profilePath);
+            $insertSuccess = TRUE;
+        } else {
+            error_log( "Error: " . $sql . "\n" . $conn->error);
+        }
+
+        error_log( "******************* Set profile picture for id: " . $conn->insert_id );
+        $conn->close();
+        return $insertSuccess;
+    }
+
+    // Delete a row of data into the table
     function deleteData( $ID )
     {
         // Create connection

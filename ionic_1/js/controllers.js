@@ -1,11 +1,12 @@
 angular.module('app.controllers', [])
   
-.controller('tripListCtrl', ['$scope', '$stateParams', '$rootScope', '$ionicPopup', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('tripListCtrl', ['$scope', '$stateParams', '$rootScope', '$ionicPopup',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
 function ($scope, $stateParams, $rootScope, $ionicPopup) {
     console.log("************** Inside tripCtrl");
     console.log("length: " + $rootScope.testTrips.length);
+    console.log("Profile Image Path: " + $rootScope.profilePic);
     $scope.locationDateText = "Test Text";
     
     $scope.deleteTrip = function(trip) {
@@ -48,10 +49,10 @@ function ($scope, $stateParams, $rootScope, $ionicPopup) {
  
 }])
    
-.controller('mapViewCtrl', ['$scope', '$stateParams', '$rootScope', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('mapViewCtrl', ['$scope', '$stateParams', '$rootScope',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $rootScope) {
+function ($scope, $stateParams, $rootScope, AuthService) {
     //Set base latlng
     var originalLatLng = {lat: 41.91862886518304, lng: -87.64892578125};
     // Create the map
@@ -143,10 +144,10 @@ function ($scope, $stateParams, $rootScope) {
  
 }])
 
-.controller('bucketListCtrl', ['$scope', '$stateParams', '$ionicPopup', '$ionicLoading', '$timeout', '$ionicPopover', '$rootScope', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
+.controller('bucketListCtrl', ['$scope', '$stateParams', '$ionicPopup', '$ionicLoading', '$timeout', '$ionicPopover', '$rootScope', 'InitUserService',// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
 // You can include any angular dependencies as parameters for this function
 // TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopover, $rootScope) {
+function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopover, $rootScope, AuthService) {
     //Set base latlng
     //var originalLatLng = {lat: 41.91862886518304, lng: -87.64892578125};
     var originalLatLng = {lat: 0, lng: 0};
@@ -391,6 +392,7 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
             // AJAX call to send the photo and other tipr data to the server    
             $.ajax({
                 url: "php/uploadBucket.php?" +  "buckettripName=" + $scope.bucketPlaceText +
+                                                "&user=" + AuthService.username() +
                                                 "&latlng=" + $scope.bucketPlaceLatLng + 
                                                 "&ID" + $scope.bucketPlaceLatLng, // Url to which the request is send
                 type: "POST",             // Type of request to be send, called as method
@@ -442,11 +444,7 @@ function ($scope, $stateParams, $ionicPopup, $ionicLoading, $timeout, $ionicPopo
     };
 }])
 
-.controller('addTripCtrl', ['$scope', '$stateParams', '$rootScope', '$ionicLoading', '$ionicPopup', '$timeout',
-// The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout) { 
+.controller('addTripCtrl', function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout, AuthService) { 
     $scope.hideMap = false;
 
     // Create the map
@@ -582,7 +580,7 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
                 imagePath = "php/upload/No-Images.png";
             }
 
-            // AJAX call to send the photo and other tipr data to the server    
+            // AJAX call to create a new trip on the server    
             $.ajax({
                 url: "php/upload.php?" +    "tripName=" + $scope.tripText +
                                             "&archived=false" +
@@ -590,7 +588,8 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
                                             "&date=" + $scope.dateString +
                                             "&descriptionText=" + $scope.descriptionText +
                                             "&latlng=" + $scope.loactionLatLng +                                            
-                                            "&imageLocation=" + imagePath,// Url to which the request is send
+                                            "&imageLocation=" + imagePath +
+                                            "&user=" + AuthService.username(),// Url to which the request is send
                 type: "POST",             // Type of request to be send, called as method
                 data: form_data,
                 contentType: false,       // The content type used when sending data to the server.
@@ -681,10 +680,11 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         });
     };
 
-}])
+})
   
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $rootScope, InitUserService) {
     $scope.username = AuthService.username();
+    console.log("***************** In AppCtrl contructor.  Username: " + $scope.username);
  
     $scope.$on(AUTH_EVENTS.notAuthorized, function(event) {
         var alertPopup = $ionicPopup.alert({
@@ -697,34 +697,122 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         });
     });
  
-  $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
-    AuthService.logout();
-    $state.go('tabsController.dashboard');
-    var alertPopup = $ionicPopup.alert({
-      title: 'Session Lost!',
-      template: 'Please login again.'
+    $scope.$on(AUTH_EVENTS.notAuthenticated, function(event) {
+      AuthService.logout();
+      $state.go('tabsController.dashboard');
+      var alertPopup = $ionicPopup.alert({
+        title: 'Session Lost!',
+        template: 'Please login again.'
+      });
     });
-  });
- 
-  $scope.setCurrentUsername = function(name) {
-    $scope.username = name;
-  };
+  
+    InitUserService.loadTripListForCurrentUsername();
+    InitUserService.loadBucketListForCurrentUsername();
+    InitUserService.loadProfileForCurrentUsername();
 })
 
-.controller('settingsCtrl', function($scope, $rootScope, $state, $ionicPopup, AuthService) {
-    $scope.loginMessage = "Logged in as " + $scope.username;
+.controller('settingsCtrl', function($scope, $rootScope, $state, $ionicPopup, $ionicLoading, $timeout, AuthService) {
+    console.log("auttService login return value: " + AuthService.username());
+    $scope.loginMessage = "Logged in as " + AuthService.username();
     $scope.showLogout = true;
     $rootScope.hideTabs = '';
-  
-    $scope.logout = function() {
-        //AuthService.logout();
-        //$scope.setCurrentUsername("");
-        $state.go('tabsController.dashboard');
+
+    // Setup Controller variables
+    var photofile = null;
+
+    //Setup spinner variables
+    $scope.showSpinner = false;
+    $scope.popupAddedText1 = "Trip Added";
+    
+    // Variables to manage the file input directive
+    $scope.file = null;
+    $scope.clearFileInput = function() {
+        $scope.file = null;
     };
     
+    $scope.logout = function() {
+        AuthService.logout();
+        $state.go('tabsController.dashboard');
+    };
+
+    $scope.addProfilePicture = function() {
+        $scope.hideMap = true;
+        $scope.showSpinner = true;
+            
+        // Create a form to send the photofile to the server
+        var form_data = new FormData();  
+        var imagePath;
+            
+        // If a photo was selected, add that data to the form and set the path
+        if(photofile!=null){
+            form_data.append('file', photofile);
+            imagePath = "php/upload/profiles/" + photofile.name;
+            
+            $ionicLoading.show({
+                template: 'Updating Profile...',
+                duration: 10000
+                }).then(function(){
+                    console.log("The loading indicator is now displayed");
+                });
+        
+            // AJAX call to add profile photo    
+            $.ajax({
+                url: "php/uploadProfilePhoto.php?"  + "imageLocation=" + imagePath
+                                                    + "&user=" + AuthService.username(),// Url to which the request is send
+                type: "POST",             // Type of request to be send, called as method
+                data: form_data,
+                contentType: false,       // The content type used when sending data to the server.
+                cache: false,             // To unable request pages to be cached
+                processData:false,        // To send DOMDocument or non processed data file it is set to false
+                success: function(data)   // A function to be called if request succeeds
+                    {
+                    console.log(data);
+                    $rootScope.profilePic = "php/" + data;
+                    console.log("profilePic Path = " + $rootScope.profilePic);
+                    $ionicLoading.hide();
+                    $scope.showSpinner = false;
+                    $scope.showAlert();
+                    }
+                });
+        }
+        else{ // if no photo was selected, show a pop up indicating that
+            var alertPopup = $ionicPopup.alert({
+                title: "Picture Not Selected",
+                template: "Please select a picture to update your profile image.",
+                duration: 10000
+            });
+        }
+        $scope.clearFileInput();  
+    };
+    
+    // An alert for once the trip is added
+    $scope.showAlert = function() {
+        console.log("in show alert");
+        var alertPopup = $ionicPopup.alert({
+            title: "Profile Picture Updated"
+            //title: $scope.popupAddedText1,
+            //template: $scope.popupAddedText2
+        });
+        alertPopup.then(function(res) {
+            console.log('Alert removed');
+        });
+        $timeout(function() {
+            alertPopup.close(); //close the popup after 4 seconds
+        }, 4000);
+    };
+    
+    // function called by HTML when a new file is selected
+    $scope.file_changed = function(element) {
+        console.log("******** In File Changed **************");
+        $scope.$apply(function(scope) {  
+            photofile = element.files[0];
+        });
+    };
+    
+    $scope.clearFileInput();
 })
 
-.controller('DashCtrl', function($scope, $state, $rootScope, $http, $ionicPopup, $ionicLoading, AuthService) {
+.controller('DashCtrl', function($scope, $state, $rootScope, $http, $ionicPopup, $ionicLoading, AuthService, InitUserService) {
     $scope.data = {};
     $rootScope.hideTabs = 'tabs-item-hide';
     $scope.hideSignIn = "block";
@@ -733,16 +821,23 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
             
     $scope.login = function(data) {
         console.log("Name: " + data.username + " Password: " + data.password);
-        AuthService.login(data.username, data.password).then(function(authenticated) {        
+        $scope.loginUP(data.username, data.password);
+    }
+    
+    $scope.loginUP = function(username, password) {
+        AuthService.login(username, password).then(function(authenticated) {        
             $rootScope.hideTabs = '';
-            $scope.setCurrentUsername(data.username);
+            $scope.username = AuthService.username();
+            InitUserService.loadTripListForCurrentUsername();
+            InitUserService.loadBucketListForCurrentUsername();
+            InitUserService.loadProfileForCurrentUsername();
             $state.go('tabsController.tripList');
         }, function(err) {
             var alertPopup = $ionicPopup.alert({
                 title: 'Sign in failed',
                 template: 'Please check your credentials.'
             });
-        });
+        });        
     }
     
     $scope.createNewUser = function(data) {
@@ -827,34 +922,49 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
                 success: function(data)   // A function to be called if request succeeds
                     {
                     console.log(data);
-                    var myObj = $.parseJSON(data);
-                    //you can now access data like this:
-                    console.log("dbKey: " + myObj[0].dbKey);
-                    console.log("newUser: " + myObj[0].newUser);
-                    console.log("email: " + myObj[0].email);
-                    console.log("userPassword: " + myObj[0].userPassword);
-                    /*
-                    $rootScope.bucketTrips.push({   dbKey:parseInt(myObj[0].dbKey),
-                                                    bucketLocation:myObj[0].bucketLocation,
-                                                    latlng:myObj[0].latlng,
-                                                    eg_date:myObj[0].reg_date,});
-                    console.log("************ BucketTrips contents after add");
-                    for(var i = 0; i < $rootScope.bucketTrips.length; i++){
-                        console.log("ID: " + i + " BucketLocaiton: " + $rootScope.bucketTrips[i].bucketLocation);
+                    if( data == "Invalid Password"){
+                        $ionicLoading.hide();
+                        var alertPopup = $ionicPopup.alert({
+                               title: 'Can not create user.',
+                               template:   'Please enter a valid password. <br>\n\
+                                           Must be at least 8 characters long. <br>\n\
+                                           Must contain a lowercase letter. <br>\n\
+                                           Must contain an uppercase letter. <br>\n\
+                                           Must contain a number or special character.'
+                        });
+                    }else
+                    if( data == "Email Already exists"){
+                        $ionicLoading.hide();
+                        var alertPopup = $ionicPopup.alert({
+                               title: 'Can not create user.',
+                               template: 'Email Already Exists'
+                        });
+                    }else{
+                        var myObj = $.parseJSON(data);
+                        //you can now access data like this:
+                        console.log("dbKey: " + myObj[0].dbKey);
+                        console.log("newUser: " + myObj[0].newUser);
+                        console.log("email: " + myObj[0].email);
+                        console.log("userPassword: " + myObj[0].userPassword);
+                        // Hide the loading popup
+                        $ionicLoading.hide();
+                        var alertPopup = $ionicPopup.alert({
+                            title: 'New User Created.',
+                            buttons: [
+                               {    text: '<b>Login</b>',
+                                    type: 'button-positive',
+                                    onTap: function(e) {
+                                        $scope.returnToSignIn();
+                                        console.log("********** Button Hit")
+                                        console.log("Eamil: " + myObj[0].email + " Password: " + myObj[0].userPassword);
+                                        $scope.loginUP(myObj[0].email, myObj[0].userPassword);
+                                    }
+                               }]
+                            });
                     }
-                    */
-                    // Hide the loading popup
-                    $ionicLoading.hide();
-                    /*
-                    $scope.showSpinner = false;
-                    // Configure and show the popup that the trip was added
-                    $scope.popupAddedText1 = myObj[0].bucketLocation;
-                    $scope.popupAddedText2 = "Bucket Trip Added!";
-                    $scope.showAlert();
-                    */              
                 }
             });
-        } else
+        }else
         if (!validUserName){
              var alertPopup = $ionicPopup.alert({
                     title: 'Can not create user.',
@@ -919,7 +1029,6 @@ function ($scope, $stateParams, $rootScope, $ionicLoading, $ionicPopup, $timeout
         return true;
     }
 
-    // Add a trip function to call from HTML
     $scope.addUser = function() {
         $scope.hideSignIn = "none";
         $scope.hideNewUser = "block";

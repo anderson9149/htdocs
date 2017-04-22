@@ -37,7 +37,7 @@ echoDebug( "imageLocation == " . $clientPath . "\n");
 $traveldata = new TravelDataAccess();
 $traveldata->setupDBVars();
 $traveldata->createDB();
-$idInserted = $traveldata->insertData(  "appEmail",
+$idInserted = $traveldata->insertData(  $_GET['user'],
                                         "appUser",
                                         "TestPassword",
                                         $_GET['tripName'],

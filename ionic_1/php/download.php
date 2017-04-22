@@ -6,9 +6,10 @@ require_once("./DBAccessClass.php");
 $traveldata = new TravelDataAccess();
 $traveldata->setupDBVars();
 $traveldata->createDB();
+$Email = $_GET['User'];
 
 // Construct the dB query to retrieve required info
-$sql = "SELECT id, tripText, archived, tripLocation, date, tripDescriptionText, latlng, imageLocation FROM UserTrips where username='appUser'";
+$sql = "SELECT id, tripText, archived, tripLocation, date, tripDescriptionText, latlng, imageLocation FROM UserTrips where email='".$Email ."'";
 $result = $traveldata->selectData($sql);
 $returnResults = array();
 
